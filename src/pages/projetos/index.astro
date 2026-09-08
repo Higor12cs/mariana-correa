@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { grafoBase, pessoa, trilha, website } from '../../data/jsonld';
+import { grafoBase, pessoa, rota, trilha, website } from '../../data/jsonld';
 import { site } from '../../data/site';
 
 const projetos = (await getCollection('projetos', ({ data }) => !data.rascunho)).sort(
@@ -22,7 +22,7 @@ const projetos = (await getCollection('projetos', ({ data }) => !data.rascunho))
     {
       '@type': 'CollectionPage',
       '@id': `${site.url}/projetos#pagina`,
-      url: `${site.url}/projetos`,
+      url: rota('/projetos'),
       name: 'Projetos',
       inLanguage: 'pt-BR',
       isPartOf: { '@id': website['@id'] },
@@ -33,7 +33,7 @@ const projetos = (await getCollection('projetos', ({ data }) => !data.rascunho))
           '@type': 'ListItem',
           position: i + 1,
           name: projeto.data.titulo,
-          url: `${site.url}/projetos/${projeto.id}`,
+          url: rota(`/projetos/${projeto.id}`),
         })),
       },
     },

@@ -5,12 +5,7 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://marianacorrea.com.br',
-  integrations: [
-    sitemap({
-      filter: (pagina) => !pagina.includes('/404'),
-      serialize: (item) => ({ ...item, url: item.url.replace(/(.+)\/$/, '$1') }),
-    }),
-  ],
+  integrations: [sitemap({ filter: (pagina) => !pagina.includes('/404') })],
   vite: {
     plugins: [tailwindcss()],
   },

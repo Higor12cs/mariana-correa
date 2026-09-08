@@ -2,13 +2,15 @@ import { redesPublicadas, servicos, site } from './site';
 
 const absoluta = (caminho: string) => new URL(caminho, site.url).href;
 
+export const rota = (caminho: string) => absoluta(caminho.endsWith('/') ? caminho : `${caminho}/`);
+
 export const pessoa = {
   '@type': 'Person',
   '@id': `${site.url}/#mariana`,
   name: site.nome,
   jobTitle: site.papelSeo,
   description: site.descricao,
-  url: site.url,
+  url: rota('/'),
   email: `mailto:${site.email}`,
   image: absoluta('/img/mariana-retrato.webp'),
   address: { '@type': 'PostalAddress', addressCountry: 'BR' },
@@ -19,7 +21,7 @@ export const pessoa = {
 export const website = {
   '@type': 'WebSite',
   '@id': `${site.url}/#site`,
-  url: site.url,
+  url: rota('/'),
   name: site.nome,
   inLanguage: 'pt-BR',
   description: site.descricao,
@@ -36,7 +38,7 @@ export const trilha = (itens: { nome: string; url: string }[]) => ({
     '@type': 'ListItem',
     position: i + 1,
     name: item.nome,
-    item: absoluta(item.url),
+    item: rota(item.url),
   })),
 });
 
@@ -50,11 +52,11 @@ export const projetoComoObra = (dados: {
   url: string;
 }) => ({
   '@type': 'CreativeWork',
-  '@id': `${absoluta(dados.url)}#obra`,
+  '@id': `${rota(dados.url)}#obra`,
   name: dados.titulo,
   headline: dados.titulo,
   description: dados.resumo,
-  url: absoluta(dados.url),
+  url: rota(dados.url),
   image: absoluta(dados.capa),
   inLanguage: 'pt-BR',
   dateCreated: dados.ano,

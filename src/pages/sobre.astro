@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Marquee from '../components/Marquee.astro';
 import { numeros, site } from '../data/site';
-import { grafoBase, pessoa, trilha, website } from '../data/jsonld';
+import { grafoBase, pessoa, rota, trilha, website } from '../data/jsonld';
 
 const trajetoria = [
   {
@@ -52,7 +52,7 @@ const competencias = [
     {
       '@type': 'AboutPage',
       '@id': `${site.url}/sobre#pagina`,
-      url: `${site.url}/sobre`,
+      url: rota('/sobre'),
       name: `Sobre — ${site.nome}`,
       inLanguage: 'pt-BR',
       isPartOf: { '@id': website['@id'] },

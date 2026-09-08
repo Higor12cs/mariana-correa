@@ -6,7 +6,7 @@ import Marquee from '../components/Marquee.astro';
 import ProjectIndex from '../components/ProjectIndex.astro';
 import HorizontalGallery from '../components/HorizontalGallery.astro';
 import { numeros, redesPublicadas, servicos, site } from '../data/site';
-import { grafoBase, pessoa, website } from '../data/jsonld';
+import { grafoBase, pessoa, rota, website } from '../data/jsonld';
 
 const projetos = (await getCollection('projetos', ({ data }) => !data.rascunho)).sort(
   (a, b) => a.data.ordem - b.data.ordem,
@@ -36,7 +36,7 @@ const pecas = projetos.flatMap((projeto) =>
     {
       '@type': 'ProfilePage',
       '@id': `${site.url}/#pagina`,
-      url: site.url,
+      url: rota('/'),
       name: `${site.nome} — ${site.papel}`,
       isPartOf: { '@id': website['@id'] },
       about: { '@id': pessoa['@id'] },

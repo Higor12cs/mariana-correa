@@ -281,8 +281,11 @@ O `Base.astro` monta o `<head>` inteiro. As props que mudam o resultado:
 | `semIndice` | `false` | Emite `noindex, follow`. Só a 404 usa |
 | `dadosEstruturados` | `[]` | Blocos JSON-LD montados em `src/data/jsonld.ts` |
 
-O canonical tira a barra final (`/projetos`, não `/projetos/`), que é como o Cloudflare
-serve as páginas. O sitemap é serializado da mesma forma, senão os dois se contradizem.
+Canonical, sitemap e JSON-LD usam a URL **com** barra final (`/projetos/`). O build do
+Astro é em formato de diretório e o Cloudflare responde 307 de `/projetos` para
+`/projetos/`, então essa é a URL final. Se um dos três apontar para a versão sem barra,
+ele passa a indicar um endereço que redireciona. Em `jsonld.ts` use o helper `rota()`
+para caminho de página e `absoluta()` só para arquivo.
 
 ### Imagem de compartilhamento
 
@@ -335,13 +338,22 @@ hífen, o build quebra antes de terminar.
 
 | Campo | Valor |
 | --- | --- |
-| Worker | `marianacorrea-com-br` |
+| Worker | `mariana-correa` (o nome no painel vence o do `wrangler.jsonc`) |
 | Build command | `npm run build` |
 | Deploy command | `npx wrangler deploy` |
 
-`html_handling: "auto-trailing-slash"` faz `/projetos` e `/projetos/` caírem na mesma
-página, e `not_found_handling: "404-page"` entrega o `dist/404.html` em vez do erro
-padrão do Cloudflare.
+`html_handling: "auto-trailing-slash"` redireciona `/projetos` para `/projetos/` com 307,
+e `not_found_handling: "404-page"` entrega o `dist/404.html` em vez do erro padrão do
+Cloudflare.
+
+O `name` do `wrangler.jsonc` precisa ser igual ao do Worker no painel. Se divergir, um
+`npx wrangler deploy` rodado da máquina cria um Worker separado em vez de atualizar o
+que está no ar.
+
+Enquanto o DNS de `marianacorrea.com.br` não apontar para o Worker, o site vive em
+`https://mariana-correa.higor12cs.workers.dev`. As meta tags são absolutas para o
+domínio final (`site` em `astro.config.mjs`), então validador de preview de link vai
+falhar até a virada. Isso é esperado e não se resolve no código.
 
 ---
 
