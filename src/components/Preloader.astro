@@ -1,0 +1,29 @@
+---
+import Slashes from './Slashes.astro';
+import { site } from '../data/site';
+---
+
+<div
+  id="preloader"
+  class="fixed inset-0 z-[100] flex flex-col justify-between bg-ink px-[var(--shell-x)] py-8 text-paper"
+>
+  <div class="flex items-start justify-between">
+    <span class="font-display text-lg font-medium tracking-tight">{site.marca}</span>
+    <Slashes class="h-5 w-auto text-lime" />
+  </div>
+
+  <div class="flex items-end justify-between gap-6">
+    <p class="max-w-xs text-[0.6875rem] font-medium uppercase tracking-[0.22em] text-paper/45">
+      {site.papel}
+    </p>
+    <span
+      id="preloader-count"
+      class="font-display text-[clamp(3.5rem,14vw,11rem)] font-light leading-[0.8] tracking-tighter tabular-nums"
+      >0</span
+    >
+  </div>
+
+  <div class="absolute inset-x-0 bottom-0 h-px bg-paper/15">
+    <div id="preloader-bar" class="h-full w-0 bg-lime"></div>
+  </div>
+</div>

@@ -1,0 +1,79 @@
+---
+import { navegacao, site } from '../data/site';
+
+const rota = Astro.url.pathname;
+const ativo = (href: string) => {
+  if (href.includes('#')) return false;
+  return href === '/' ? rota === '/' : rota.startsWith(href);
+};
+---
+
+<header
+  id="site-header"
+  class="fixed inset-x-0 top-0 z-50 mix-blend-difference transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+>
+  <div class="shell flex items-center justify-between py-6 text-paper">
+    <a
+      href="/"
+      data-cursor="link"
+      class="font-display text-xl font-medium tracking-tight transition-opacity hover:opacity-60"
+    >
+      {site.marca}
+    </a>
+
+    <nav class="hidden items-center gap-9 md:flex">
+      {
+        navegacao.map((item) => (
+          <a
+            href={item.href}
+            data-cursor="link"
+            class:list={[
+              'eyebrow relative py-1 transition-opacity hover:opacity-60',
+              ativo(item.href) ? 'opacity-100' : 'opacity-55',
+            ]}
+          >
+            {item.rotulo}
+            {ativo(item.href) && <span class="absolute -bottom-0.5 left-0 h-px w-full bg-lime" />}
+          </a>
+        ))
+      }
+    </nav>
+
+    <button
+      id="menu-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="menu-mobile"
+      class="eyebrow md:hidden"
+    >
+      <span data-menu-open>Menu</span>
+      <span data-menu-close class="hidden">Fechar</span>
+    </button>
+  </div>
+</header>
+
+<div class="pointer-events-none fixed inset-x-0 top-0 z-[60] h-px bg-transparent">
+  <div id="scroll-progress" class="h-full origin-left scale-x-0 bg-lime"></div>
+</div>
+
+<div
+  id="menu-mobile"
+  class="fixed inset-0 z-40 hidden translate-y-full bg-ink px-[var(--shell-x)] pb-10 pt-28 text-paper transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] md:hidden"
+>
+  <nav class="flex flex-col gap-2">
+    {
+      navegacao.map((item, i) => (
+        <a href={item.href} class="display-md border-b border-paper/10 py-4">
+          <span class="mr-4 align-super text-[0.6875rem] tracking-[0.22em] text-lime">0{i + 1}</span>
+          {item.rotulo}
+        </a>
+      ))
+    }
+  </nav>
+  <a
+    href={`mailto:${site.email}`}
+    class="mt-10 block text-sm font-light text-paper/60 underline underline-offset-4"
+  >
+    {site.email}
+  </a>
+</div>

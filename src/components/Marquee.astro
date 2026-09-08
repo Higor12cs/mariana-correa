@@ -1,0 +1,26 @@
+---
+interface Props {
+  itens: string[];
+  class?: string;
+  velocidade?: number;
+}
+const { itens, class: className = '', velocidade = 1 } = Astro.props;
+const trilha = [...itens, ...itens, ...itens];
+---
+
+<div
+  class:list={['relative flex overflow-hidden whitespace-nowrap', className]}
+  data-marquee
+  data-speed={velocidade}
+>
+  <div class="flex shrink-0 items-center gap-10 pr-10" data-marquee-track>
+    {
+      trilha.map((item) => (
+        <span class="display-md flex items-center gap-10">
+          {item}
+          <span class="text-lime">//</span>
+        </span>
+      ))
+    }
+  </div>
+</div>

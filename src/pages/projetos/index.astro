@@ -1,0 +1,75 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const projetos = (await getCollection('projetos', ({ data }) => !data.rascunho)).sort(
+  (a, b) => a.data.ordem - b.data.ordem,
+);
+---
+
+<Base
+  titulo="Projetos"
+  descricao="Branding, identidade visual, naming e direção de arte para marcas de saúde, arquitetura, moda e seguros."
+>
+  <section class="relative overflow-hidden pb-16 pt-40 md:pb-24 md:pt-56">
+    <div class="glow -right-32 top-0 size-[38vw] min-h-[18rem] min-w-[18rem] opacity-70"></div>
+
+    <div class="shell relative" data-reveal="hero">
+      <span class="eyebrow fade-up opacity-45">{projetos.length} projetos</span>
+      <h1 class="display-xl mt-6">
+        <span class="reveal-line"><span>PROJETOS</span></span>
+      </h1>
+      <p class="lede fade-up mt-10 max-w-xl opacity-70">
+        Uma seleção de trabalhos de branding, identidade visual e naming, do diagnóstico
+        estratégico às aplicações finais.
+      </p>
+    </div>
+  </section>
+
+  <section class="pb-24 md:pb-36">
+    <div class="shell grid gap-x-8 gap-y-16 md:grid-cols-2" data-reveal>
+      {
+        projetos.map((projeto, i) => (
+          <a
+            href={`/projetos/${projeto.id}`}
+            data-cursor="view"
+            class:list={[
+              'group fade-up block',
+              i % 2 === 1 ? 'md:mt-24' : '',
+            ]}
+          >
+            <div class="relative aspect-[4/3] overflow-hidden bg-ink/5" data-img data-skew>
+              <img
+                src={projeto.data.capa}
+                alt={projeto.data.titulo}
+                width="1200"
+                height="1080"
+                loading={i < 2 ? 'eager' : 'lazy'}
+                decoding="async"
+                class="size-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
+              />
+            </div>
+
+            <div class="mt-6 flex items-start justify-between gap-6">
+              <div>
+                <h2 class="display-md">{projeto.data.titulo}</h2>
+                <p class="mt-3 max-w-sm text-sm font-light leading-relaxed opacity-55">
+                  {projeto.data.resumo}
+                </p>
+              </div>
+              <span class="eyebrow shrink-0 opacity-40">{projeto.data.ano}</span>
+            </div>
+
+            <ul class="mt-5 flex flex-wrap gap-2">
+              {projeto.data.servicos.map((servico) => (
+                <li class="rounded-full border border-ink/15 px-3 py-1.5 text-[0.6875rem] uppercase tracking-[0.14em] opacity-55">
+                  {servico}
+                </li>
+              ))}
+            </ul>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</Base>

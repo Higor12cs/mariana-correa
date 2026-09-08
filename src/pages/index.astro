@@ -1,0 +1,264 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Slashes from '../components/Slashes.astro';
+import Marquee from '../components/Marquee.astro';
+import ProjectIndex from '../components/ProjectIndex.astro';
+import HorizontalGallery from '../components/HorizontalGallery.astro';
+import { numeros, servicos, site } from '../data/site';
+
+const projetos = (await getCollection('projetos', ({ data }) => !data.rascunho)).sort(
+  (a, b) => a.data.ordem - b.data.ordem,
+);
+
+const especialidades = ['Branding', 'Identidade Visual', 'Naming', 'Direção de Arte', 'Estratégia'];
+
+const pecas = projetos.flatMap((projeto) =>
+  [projeto.data.imagemIntro, ...projeto.data.galeria.map((g) => g.src)]
+    .filter((src): src is string => Boolean(src))
+    .map((src) => ({
+      src,
+      alt: `Aplicações da marca ${projeto.data.titulo}`,
+      titulo: projeto.data.titulo,
+      legenda: projeto.data.segmento,
+    })),
+);
+---
+
+<Base titulo={site.nome} intro>
+  <section
+    id="topo"
+    class="relative flex min-h-svh flex-col justify-between overflow-hidden pb-12 pt-24"
+  >
+    <div class="pointer-events-none absolute inset-0 overflow-hidden" data-parallax="70">
+      <div
+        data-blob
+        class="glow left-1/2 top-1/2 size-[46vw] min-h-[22rem] min-w-[22rem] -translate-x-1/2 -translate-y-1/2"
+      >
+      </div>
+      <div
+        data-blob
+        class="glow left-[38%] top-[58%] size-[30vw] min-h-[15rem] min-w-[15rem] -translate-x-1/2 -translate-y-1/2 opacity-70"
+      >
+      </div>
+    </div>
+
+    <div class="shell relative z-10" data-reveal="hero">
+      <div class="flex flex-wrap items-baseline justify-between gap-x-10 gap-y-3">
+        <div
+          class="reveal-line font-display text-[clamp(1.5rem,3.4vw,2.75rem)] font-medium tracking-tight"
+        >
+          <span class="flex">MARIANA<span class="text-lime">//</span>CORRÊA</span>
+        </div>
+        <div class="reveal-line eyebrow opacity-55">
+          <span>{site.papel}</span>
+        </div>
+      </div>
+      <div class="mt-5 rule"></div>
+    </div>
+
+    <div class="shell relative z-10 flex items-end justify-between gap-8" data-reveal="hero">
+      <h1 class="display-xl">
+        <span class="reveal-line"><span>PORTFÓLIO</span></span>
+      </h1>
+      <Slashes class="mb-3 hidden h-[clamp(3rem,7vw,7rem)] w-auto shrink-0 sm:block" />
+    </div>
+  </section>
+
+  <section class="bg-ink py-28 text-paper md:py-40" data-theme="escuro">
+    <div class="shell grid gap-14 lg:grid-cols-[1fr_1.1fr] lg:gap-24" data-reveal>
+      <div>
+        <span class="eyebrow fade-up text-lime">Como eu trabalho</span>
+        <div class="mt-10 flex gap-8">
+          {
+            numeros.map((numero) => (
+              <div class="fade-up">
+                <span class="block font-display text-[clamp(2.25rem,4vw,3.5rem)] font-light leading-none tracking-tighter">
+                  {numero.valor}
+                </span>
+                <span class="mt-2 block text-[0.6875rem] uppercase tracking-[0.18em] text-paper/40">
+                  {numero.rotulo}
+                </span>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <div>
+        <h2 class="display-md">
+          <span class="reveal-line"><span>O desenho vem depois</span></span>
+          <span class="reveal-line"><span>da <em class="not-italic text-lime">decisão de negócio</em>.</span></span>
+        </h2>
+        <div class="mt-10 max-w-xl space-y-5 text-base font-light leading-relaxed text-paper/60">
+          <p class="fade-up">
+            Minha experiência passa por agências, projetos independentes e diferentes segmentos, sempre
+            buscando transformar objetivos de negócio em soluções criativas, consistentes e
+            relevantes.
+          </p>
+          <p class="fade-up">
+            Trabalho na construção e evolução de identidades visuais, campanhas institucionais e
+            comerciais, comunicação digital e estratégias voltadas ao fortalecimento do
+            posicionamento e do valor percebido das marcas.
+          </p>
+        </div>
+        <a
+          href="/sobre"
+          data-cursor="link"
+          class="fade-up mt-10 inline-flex items-center gap-3 border-b border-lime pb-1 text-[0.6875rem] font-medium uppercase tracking-[0.22em] text-lime"
+        >
+          Conheça a trajetória
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="border-y border-ink/10 bg-lime py-5 text-ink">
+    <Marquee itens={especialidades} velocidade={1} />
+  </div>
+
+  <section id="projetos" class="py-24 md:py-36">
+    <div class="shell" data-reveal>
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <span class="eyebrow fade-up opacity-45">Selecionados</span>
+          <h2 class="display-lg mt-5">
+            <span class="reveal-line"><span>Projetos</span></span>
+          </h2>
+        </div>
+        <a
+          href="/projetos"
+          data-cursor="link"
+          class="fade-up border-b border-ink/25 pb-1 text-[0.6875rem] font-medium uppercase tracking-[0.22em] transition-colors hover:border-lime"
+        >
+          Ver todos ({projetos.length})
+        </a>
+      </div>
+
+      <div class="mt-14">
+        <ProjectIndex projetos={projetos} />
+      </div>
+    </div>
+  </section>
+
+  <HorizontalGallery eyebrow="Bastidores" titulo="Aplicações" pecas={pecas} />
+
+  <section class="bg-ink py-24 text-paper md:py-36" data-theme="escuro">
+    <div class="shell" data-reveal>
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <span class="eyebrow fade-up text-lime">O que eu faço</span>
+        <h2 class="display-lg">
+          <span class="reveal-line"><span>Serviços</span></span>
+        </h2>
+      </div>
+
+      <dl class="mt-16 border-t border-paper/15">
+        {
+          servicos.map((servico) => (
+            <div class="fade-up grid gap-6 border-b border-paper/15 py-10 md:grid-cols-[5rem_1fr_1.1fr] md:gap-10">
+              <dt class="eyebrow text-lime">{servico.numero}</dt>
+              <dd class="display-md">{servico.titulo}</dd>
+              <dd class="space-y-5">
+                <p class="text-base font-light leading-relaxed text-paper/55">{servico.descricao}</p>
+                <ul class="flex flex-wrap gap-2">
+                  {servico.itens.map((item) => (
+                    <li class="rounded-full border border-paper/20 px-3 py-1.5 text-[0.6875rem] uppercase tracking-[0.14em] text-paper/50">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section class="py-24 md:py-36">
+    <div class="shell grid items-center gap-12 lg:grid-cols-[0.85fr_1fr] lg:gap-20" data-reveal>
+      <div class="relative aspect-[3/4] overflow-hidden bg-ink/5" data-img>
+        <img
+          src="/img/mariana-retrato.webp"
+          alt="Retrato de Mariana Corrêa"
+          width="507"
+          height="793"
+          loading="lazy"
+          decoding="async"
+          class="size-full object-cover"
+        />
+      </div>
+
+      <div>
+        <span class="eyebrow fade-up opacity-45">Sobre</span>
+        <h2 class="display-md mt-6">
+          <span class="reveal-line"><span>Publicitária,</span></span>
+          <span class="reveal-line"><span>estrategista de marcas</span></span>
+          <span class="reveal-line"><span>e diretora de arte.</span></span>
+        </h2>
+        <div class="mt-8 max-w-lg space-y-5 text-base font-light leading-relaxed opacity-65">
+          <p class="fade-up">
+            Também tive a oportunidade de participar da estruturação e gestão de uma agência de
+            marketing como co-fundadora, experiência que ampliou minha visão sobre negócios,
+            processos, clientes e liderança de equipes criativas.
+          </p>
+          <p class="fade-up">
+            Tenho um perfil colaborativo, organizado e hands-on, com facilidade para assumir
+            responsabilidades, conectar diferentes áreas e transformar estratégia em trabalho que
+            realmente acontece.
+          </p>
+        </div>
+        <a
+          href="/sobre"
+          data-cursor="link"
+          class="fade-up mt-10 inline-flex items-center gap-3 border-b border-ink/25 pb-1 text-[0.6875rem] font-medium uppercase tracking-[0.22em] transition-colors hover:border-lime"
+        >
+          Ler mais
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="contato" class="relative overflow-hidden bg-ink pb-16 pt-28 text-paper md:pb-24 md:pt-44" data-theme="escuro">
+    <div
+      data-blob
+      class="glow left-1/2 top-[58%] size-[40vw] min-h-[20rem] min-w-[20rem] -translate-x-1/2 -translate-y-1/2 opacity-70"
+    >
+    </div>
+
+    <div class="shell relative" data-reveal>
+      <span class="eyebrow fade-up text-lime">Contato</span>
+
+      <h2 class="display-lg mt-8 max-w-4xl">
+        <span class="reveal-line"><span>Vamos construir</span></span>
+        <span class="reveal-line"><span>algo consistente?</span></span>
+      </h2>
+
+      <a
+        href={`mailto:${site.email}`}
+        data-cursor="view"
+        class="fade-up mt-12 inline-block font-display text-[clamp(1.25rem,3.5vw,2.75rem)] font-light tracking-tight underline decoration-lime decoration-1 underline-offset-8 transition-colors hover:text-lime"
+      >
+        {site.email}
+      </a>
+
+      <div class="mt-14 flex flex-wrap gap-x-8 gap-y-3">
+        {
+          site.redes.map((rede) => (
+            <a
+              href={rede.url}
+              target="_blank"
+              rel="noreferrer"
+              data-cursor="link"
+              class="fade-up text-[0.6875rem] font-medium uppercase tracking-[0.22em] text-paper/50 transition-colors hover:text-lime"
+            >
+              {rede.nome}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Base>

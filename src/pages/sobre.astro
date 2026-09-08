@@ -1,0 +1,172 @@
+---
+import Base from '../layouts/Base.astro';
+import Marquee from '../components/Marquee.astro';
+import { numeros, site } from '../data/site';
+
+const trajetoria = [
+  {
+    periodo: 'Hoje',
+    titulo: 'Direção criativa e estratégia',
+    texto:
+      'Busco oportunidades em que possa colocar essa visão integrada em prática, seja na direção de arte e criação, estratégia de marcas e marketing, ou em posições de gestão e coordenação.',
+  },
+  {
+    periodo: 'Agência própria',
+    titulo: 'Co-fundadora',
+    texto:
+      'Participei da estruturação e gestão de uma agência de marketing como co-fundadora, experiência que ampliou minha visão sobre negócios, processos, clientes e liderança de equipes criativas.',
+  },
+  {
+    periodo: 'Agências e projetos',
+    titulo: 'Branding e comunicação',
+    texto:
+      'Planejamento e execução de campanhas institucionais e comerciais, projetos de branding, construção e evolução de identidades visuais e comunicação digital.',
+  },
+];
+
+const competencias = [
+  'Estratégia de marca',
+  'Posicionamento',
+  'Naming',
+  'Identidade visual',
+  'Direção de arte',
+  'Identidade verbal',
+  'Campanhas',
+  'Comunicação digital',
+  'Gestão de equipes',
+];
+---
+
+<Base
+  titulo="Sobre"
+  descricao="Publicitária, estrategista de marcas e diretora de arte com mais de 6 anos de experiência em branding, comunicação e direção criativa."
+>
+  <section class="relative overflow-hidden pb-16 pt-40 md:pb-24 md:pt-56">
+    <div class="glow -left-24 top-10 size-[36vw] min-h-[18rem] min-w-[18rem] opacity-70"></div>
+
+    <div class="shell relative" data-reveal="hero">
+      <span class="eyebrow fade-up opacity-45">Sobre</span>
+      <h1 class="display-xl mt-6">
+        <span class="reveal-line"><span>MARIANA</span></span>
+        <span class="reveal-line"><span>CORRÊA</span></span>
+      </h1>
+      <p class="lede fade-up mt-10 max-w-xl opacity-70">{site.papel}</p>
+    </div>
+  </section>
+
+  <section class="pb-24 md:pb-32">
+    <div class="shell grid items-start gap-12 lg:grid-cols-[0.8fr_1fr] lg:gap-20" data-reveal>
+      <div class="relative aspect-[3/4] overflow-hidden bg-ink/5 lg:sticky lg:top-32" data-img>
+        <img
+          src="/img/mariana-retrato.webp"
+          alt="Retrato de Mariana Corrêa"
+          width="507"
+          height="793"
+          loading="eager"
+          decoding="async"
+          class="size-full object-cover"
+        />
+      </div>
+
+      <div class="space-y-6 text-base font-light leading-relaxed opacity-75">
+        <p class="fade-up text-[clamp(1.05rem,1.5vw,1.375rem)] leading-relaxed opacity-100">
+          Há mais de 6 anos atuo no desenvolvimento de marcas, projetos de comunicação e direção
+          criativa, construindo uma trajetória que une estratégia, design e visão de negócio.
+        </p>
+        <p class="fade-up">
+          Minha experiência passa por agências, projetos independentes e diferentes segmentos,
+          sempre buscando transformar objetivos de negócio em soluções criativas, consistentes e
+          relevantes.
+        </p>
+        <p class="fade-up">
+          Ao longo dessa trajetória, participei do planejamento e execução de campanhas
+          institucionais e comerciais, projetos de branding, construção e evolução de identidades
+          visuais, comunicação digital e estratégias voltadas ao fortalecimento do posicionamento e
+          do valor percebido das marcas.
+        </p>
+        <p class="fade-up">
+          Também tive a oportunidade de participar da estruturação e gestão de uma agência de
+          marketing como co-fundadora, experiência que ampliou minha visão sobre negócios,
+          processos, clientes e liderança de equipes criativas.
+        </p>
+        <p class="fade-up">
+          Tenho um perfil colaborativo, organizado e hands-on, com facilidade para assumir
+          responsabilidades, conectar diferentes áreas e transformar estratégia em trabalho que
+          realmente acontece.
+        </p>
+
+        <div class="fade-up flex flex-wrap gap-8 border-t border-ink/10 pt-8">
+          {
+            numeros.map((numero) => (
+              <div>
+                <span class="block font-display text-[clamp(2rem,3.4vw,3rem)] font-light leading-none tracking-tighter">
+                  {numero.valor}
+                </span>
+                <span class="mt-2 block text-[0.6875rem] uppercase tracking-[0.18em] opacity-45">
+                  {numero.rotulo}
+                </span>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="border-y border-ink/10 bg-lime py-5 text-ink">
+    <Marquee itens={['Estratégia', 'Design', 'Visão de negócio']} velocidade={0.8} />
+  </div>
+
+  <section class="bg-ink py-24 text-paper md:py-36" data-theme="escuro">
+    <div class="shell" data-reveal>
+      <span class="eyebrow fade-up text-lime">Trajetória</span>
+
+      <ol class="mt-14 border-t border-paper/15">
+        {
+          trajetoria.map((etapa) => (
+            <li class="fade-up grid gap-5 border-b border-paper/15 py-10 md:grid-cols-[13rem_1fr] md:gap-12">
+              <span class="text-[0.6875rem] uppercase tracking-[0.18em] text-paper/40">
+                {etapa.periodo}
+              </span>
+              <div>
+                <h2 class="display-md">{etapa.titulo}</h2>
+                <p class="mt-4 max-w-2xl text-base font-light leading-relaxed text-paper/55">
+                  {etapa.texto}
+                </p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="mt-16" data-reveal>
+        <span class="eyebrow fade-up text-paper/35">Competências</span>
+        <ul class="mt-6 flex flex-wrap gap-2">
+          {
+            competencias.map((item) => (
+              <li class="fade-up rounded-full border border-paper/20 px-4 py-2 text-[0.6875rem] uppercase tracking-[0.14em] text-paper/55">
+                {item}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-24 md:py-36">
+    <div class="shell" data-reveal>
+      <h2 class="display-lg max-w-3xl">
+        <span class="reveal-line"><span>Vamos construir</span></span>
+        <span class="reveal-line"><span>algo consistente?</span></span>
+      </h2>
+      <a
+        href={`mailto:${site.email}`}
+        data-cursor="view"
+        class="fade-up mt-10 inline-block font-display text-[clamp(1.25rem,3vw,2.25rem)] font-light tracking-tight underline decoration-lime decoration-1 underline-offset-8"
+      >
+        {site.email}
+      </a>
+    </div>
+  </section>
+</Base>

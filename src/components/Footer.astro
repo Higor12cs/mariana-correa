@@ -1,0 +1,63 @@
+---
+import Slashes from './Slashes.astro';
+import { navegacao, site } from '../data/site';
+
+const ano = new Date().getFullYear();
+---
+
+<footer class="bg-ink px-[var(--shell-x)] pb-8 pt-4 text-paper" data-theme="escuro">
+  <div class="grid gap-12 border-t border-paper/10 pt-12 md:grid-cols-[1.4fr_1fr_1fr]">
+    <div>
+      <Slashes class="h-6 w-auto text-lime" />
+      <p class="mt-6 max-w-sm text-sm font-light leading-relaxed text-paper/55">
+        {site.descricao}
+      </p>
+    </div>
+
+    <nav class="flex flex-col gap-3">
+      <span class="eyebrow text-paper/35">Navegação</span>
+      {
+        navegacao.map((item) => (
+          <a
+            href={item.href}
+            data-cursor="link"
+            class="w-fit text-sm font-light text-paper/70 transition-colors hover:text-lime"
+          >
+            {item.rotulo}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex flex-col gap-3">
+      <span class="eyebrow text-paper/35">Contato</span>
+      <a
+        href={`mailto:${site.email}`}
+        data-cursor="link"
+        class="w-fit text-sm font-light text-paper/70 transition-colors hover:text-lime"
+      >
+        {site.email}
+      </a>
+      {
+        site.redes.map((rede) => (
+          <a
+            href={rede.url}
+            target="_blank"
+            rel="noreferrer"
+            data-cursor="link"
+            class="w-fit text-sm font-light text-paper/70 transition-colors hover:text-lime"
+          >
+            {rede.nome}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+
+  <div
+    class="mt-16 flex flex-col gap-3 border-t border-paper/10 pt-6 text-[0.6875rem] uppercase tracking-[0.18em] text-paper/35 sm:flex-row sm:items-center sm:justify-between"
+  >
+    <span>&copy; {ano} {site.nome}</span>
+    <span>{site.local}</span>
+  </div>
+</footer>

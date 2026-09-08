@@ -1,0 +1,136 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Slashes from '../../components/Slashes.astro';
+
+export const getStaticPaths = (async () => {
+  const projetos = (await getCollection('projetos', ({ data }) => !data.rascunho)).sort(
+    (a, b) => a.data.ordem - b.data.ordem,
+  );
+
+  return projetos.map((projeto, i) => ({
+    params: { slug: projeto.id },
+    props: {
+      projeto,
+      proximo: projetos[(i + 1) % projetos.length],
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { projeto, proximo } = Astro.props;
+const { Content } = await render(projeto);
+const { data } = projeto;
+
+const ficha = [
+  { rotulo: 'Cliente', valor: data.cliente ?? data.titulo },
+  { rotulo: 'Segmento', valor: data.segmento },
+  { rotulo: 'Ano', valor: data.ano },
+  { rotulo: 'Escopo', valor: data.servicos.join(', ') },
+];
+---
+
+<Base titulo={data.titulo} descricao={data.resumo} imagem={data.capa}>
+  <article>
+    <header
+      class="relative overflow-hidden pb-16 pt-40 text-paper md:pb-24 md:pt-56"
+      style={`background-color: ${data.cor}`}
+      data-theme="escuro"
+    >
+      <div class="shell relative" data-reveal="hero">
+        <a
+          href="/projetos"
+          data-cursor="link"
+          class="fade-up inline-flex items-center gap-2 text-[0.6875rem] font-medium uppercase tracking-[0.22em] opacity-60 transition-opacity hover:opacity-100"
+        >
+          <span aria-hidden="true">&larr;</span>
+          Todos os projetos
+        </a>
+
+        <h1 class="display-xl mt-10">
+          <span class="reveal-line"><span>{data.titulo}</span></span>
+        </h1>
+
+        <p class="lede fade-up mt-8 max-w-xl opacity-75">{data.resumo}</p>
+
+        <dl class="mt-16 grid gap-8 border-t border-current/20 pt-8 sm:grid-cols-2 lg:grid-cols-4">
+          {
+            ficha.map((linha) => (
+              <div class="fade-up">
+                <dt class="text-[0.6875rem] uppercase tracking-[0.18em] opacity-50">
+                  {linha.rotulo}
+                </dt>
+                <dd class="mt-2 text-sm font-light">{linha.valor}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </header>
+
+    {
+      data.imagemIntro && (
+        <div class="relative aspect-[16/9] overflow-hidden bg-ink/5" data-img data-skew>
+          <img
+            src={data.imagemIntro}
+            alt={`Apresentação do projeto ${data.titulo}`}
+            width="1920"
+            height="1080"
+            loading="eager"
+            decoding="async"
+            class="size-full object-cover"
+          />
+        </div>
+      )
+    }
+
+    <div class="shell py-20 md:py-32">
+      <div class="grid gap-12 lg:grid-cols-[1fr_1.6fr] lg:gap-20" data-reveal>
+        <div class="lg:sticky lg:top-32 lg:self-start">
+          <Slashes class="h-8 w-auto text-lime" />
+          <p class="eyebrow mt-6 opacity-45">O projeto</p>
+        </div>
+
+        <div class="prose-case fade-up max-w-2xl">
+          <Content />
+        </div>
+      </div>
+    </div>
+
+    {
+      data.galeria.length > 0 && (
+        <div class="shell grid gap-6 pb-20 md:gap-10 md:pb-32">
+          {data.galeria.map((imagem) => (
+            <figure class="aspect-[16/9] overflow-hidden bg-ink/5" data-img data-skew>
+              <img
+                src={imagem.src}
+                alt={imagem.alt}
+                width="1920"
+                height="1080"
+                loading="lazy"
+                decoding="async"
+                class="size-full object-cover"
+              />
+            </figure>
+          ))}
+        </div>
+      )
+    }
+
+    <a
+      href={`/projetos/${proximo.id}`}
+      data-cursor="view"
+      class="group relative block overflow-hidden py-24 text-paper md:py-36"
+      style={`background-color: ${proximo.data.cor}`}
+      data-theme="escuro"
+    >
+      <div class="shell relative flex flex-col gap-4" data-reveal>
+        <span class="eyebrow fade-up opacity-55">Próximo projeto</span>
+        <h2 class="display-lg transition-transform duration-[1.1s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-4">
+          <span class="reveal-line"><span>{proximo.data.titulo}</span></span>
+        </h2>
+        <span class="fade-up text-sm font-light opacity-60">{proximo.data.segmento}</span>
+      </div>
+    </a>
+  </article>
+</Base>

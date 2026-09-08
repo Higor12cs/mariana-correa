@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base titulo="Página não encontrada">
+  <section class="relative flex min-h-svh items-center overflow-hidden">
+    <div class="glow left-1/2 top-1/2 size-[40vw] min-h-[20rem] min-w-[20rem] -translate-x-1/2 -translate-y-1/2"></div>
+
+    <div class="shell relative" data-reveal="hero">
+      <h1 class="display-xl">
+        <span class="reveal-line"><span>404</span></span>
+      </h1>
+      <p class="lede fade-up mt-8 max-w-md opacity-70">
+        Esta página não existe ou mudou de endereço.
+      </p>
+      <a
+        href="/"
+        data-cursor="link"
+        class="fade-up mt-10 inline-flex items-center gap-3 border-b border-ink/25 pb-1 text-[0.6875rem] font-medium uppercase tracking-[0.22em] transition-colors hover:border-lime"
+      >
+        Voltar ao início
+        <span aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+  </section>
+</Base>

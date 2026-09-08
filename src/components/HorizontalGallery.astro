@@ -1,0 +1,77 @@
+---
+interface Peca {
+  src: string;
+  alt: string;
+  titulo: string;
+  legenda: string;
+}
+
+interface Props {
+  eyebrow: string;
+  titulo: string;
+  pecas: Peca[];
+}
+
+const { eyebrow, titulo, pecas } = Astro.props;
+---
+
+<section
+  data-horizontal
+  class="relative flex min-h-svh flex-col justify-center overflow-hidden bg-ink py-20 text-paper"
+  data-theme="escuro"
+>
+  <div class="shell flex flex-wrap items-end justify-between gap-6" data-reveal>
+    <div>
+      <span class="eyebrow fade-up text-lime">{eyebrow}</span>
+      <h2 class="display-lg mt-5">
+        <span class="reveal-line"><span>{titulo}</span></span>
+      </h2>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <span class="eyebrow hidden opacity-40 md:block">Role para o lado</span>
+      <div class="h-px w-32 bg-paper/20">
+        <div
+          data-horizontal-progress
+          class="h-full origin-left scale-x-0 bg-lime"
+        >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    data-horizontal-viewport
+    class="mt-14 w-full overflow-hidden"
+    data-cursor="drag"
+  >
+    <div
+      data-horizontal-track
+      class="flex w-max gap-5 px-[var(--shell-x)] md:gap-8"
+    >
+      {
+        pecas.map((peca, i) => (
+          <figure class="w-[74vw] shrink-0 sm:w-[52vw] md:w-[40vw] lg:w-[32vw]">
+            <div class="aspect-[4/3] overflow-hidden bg-paper/5" data-skew>
+              <img
+                src={peca.src}
+                alt={peca.alt}
+                width="1920"
+                height="1080"
+                loading={i < 3 ? 'eager' : 'lazy'}
+                decoding="async"
+                class="size-full object-cover"
+              />
+            </div>
+            <figcaption class="mt-4 flex items-baseline justify-between gap-4">
+              <span class="text-sm font-light">{peca.titulo}</span>
+              <span class="text-[0.6875rem] uppercase tracking-[0.18em] text-paper/40">
+                {peca.legenda}
+              </span>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>
