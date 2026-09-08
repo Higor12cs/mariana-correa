@@ -78,6 +78,7 @@ src/
   content/projetos/*.md     <- cada projeto é um arquivo markdown
   content.config.ts         <- schema (zod) da collection
   data/site.ts              <- nome, contato, redes, serviços, números
+  data/jsonld.ts            <- blocos JSON-LD (Person, WebSite, breadcrumb, obra)
   components/
     Slashes.astro           <- símbolo //
     Cursor.astro            <- cursor customizado (markup)
@@ -86,6 +87,7 @@ src/
     Footer.astro
     Marquee.astro           <- faixa infinita
     ProjectIndex.astro      <- lista de projetos com preview no hover
+    HorizontalGallery.astro <- galeria pinada com scroll horizontal
   layouts/Base.astro        <- html, meta tags, fontes, slots
   scripts/motion.ts         <- TODA a lógica de animação
   pages/
@@ -94,9 +96,13 @@ src/
     projetos/index.astro
     projetos/[...slug].astro
     404.astro
-public/img/
-  projetos/<slug>-cover.webp, <slug>-01.webp, <slug>-02.webp
-  mariana-retrato.webp, og.webp
+public/
+  robots.txt, site.webmanifest
+  favicon.ico, favicon.svg, apple-touch-icon.png, icon-192.png, icon-512.png
+  img/
+    projetos/<slug>-cover.webp, <slug>-01.webp, <slug>-02.webp, <slug>-og.jpg
+    mariana-retrato.webp, og.webp, og.jpg
+wrangler.jsonc              <- config do Worker (assets estáticos)
 ```
 
 ---
@@ -111,7 +117,8 @@ Coloque em `public/img/projetos/` seguindo a convenção:
 
 | Arquivo | Proporção sugerida | Onde aparece |
 | --- | --- | --- |
-| `<slug>-cover.webp` | ~4:3 (1200px de largura) | Card da listagem, preview no hover, OG image |
+| `<slug>-cover.webp` | ~4:3 (1200px de largura) | Card da listagem e preview no hover |
+| `<slug>-og.jpg` | 1200×630 | Imagem de compartilhamento (gerada da capa, ver §7) |
 | `<slug>-01.webp` | 16:9 (1920px) | Faixa full-bleed logo abaixo do título no case |
 | `<slug>-02.webp` | 16:9 (1920px) | Galeria (pode ter quantas quiser) |
 
@@ -135,6 +142,7 @@ destaque: true
 rascunho: false
 cor: "#2B3A55"
 capa: "/img/projetos/meu-projeto-cover.webp"
+og: "/img/projetos/meu-projeto-og.jpg"
 imagemIntro: "/img/projetos/meu-projeto-01.webp"
 galeria:
   - src: "/img/projetos/meu-projeto-02.webp"
@@ -208,7 +216,7 @@ Você controla o comportamento **por atributo no HTML**, sem escrever JS:
 | `data-blob` | Respiração lenta (deriva + escala) do gradiente verde do hero |
 | `data-img` numa moldura | Imagem entra com clip-path abrindo + zoom de 1.3 → 1 |
 | `data-skew` | Inclina levemente conforme a velocidade do scroll |
-| `data-cursor="view" \| "link"` | Estado do cursor customizado |
+| `data-cursor="view" \| "link" \| "drag"` | Estado do cursor customizado |
 | `data-horizontal` + `data-horizontal-track` | Seção pinada com scroll horizontal (ver `HorizontalGallery.astro`) |
 | `data-marquee` + `data-speed` | Faixa infinita que acelera com o scroll |
 
@@ -225,6 +233,14 @@ Você controla o comportamento **por atributo no HTML**, sem escrever JS:
   layout. Onde precisar de coluna fixa, use `lg:sticky lg:top-32` (é o que a página de case faz).
 - Todo o movimento é desligado em `prefers-reduced-motion: reduce`.
 - O cursor customizado só existe em ponteiro fino (`hover: hover and pointer: fine`).
+- **O estado do cursor é resolvido por posição, não por `mouseenter`/`mouseleave`.** A
+  versão antiga registrava os dois eventos em cada `a`, `button` e `[data-cursor]` no
+  carregamento, e o estado grudava: quando a seção saía de baixo do ponteiro por scroll
+  (rolar com o mouse parado em cima de um projeto, ou a galeria horizontal despinando),
+  o `mouseleave` não disparava e o cursor continuava em "Ver" ou "Arraste" pelo resto da
+  página. Agora o `motion.ts` guarda a última posição do ponteiro e resolve o estado com
+  `elementFromPoint` + `closest`, num rAF disparado por `mousemove`, `scroll` e `resize`.
+  Efeito colateral bom: elemento inserido depois do carregamento passa a funcionar sozinho.
 - O preloader aparece **uma vez por sessão** (`sessionStorage`) e só na home
   (`<Base intro>`). Para revê-lo, abra uma aba anônima.
 - O header usa `mix-blend-difference`: ele se inverte sozinho sobre qualquer fundo,
@@ -249,23 +265,109 @@ Não vale a pena refazer sem pedido explícito da cliente:
 O momento "locomotive" que ficou é a galeria horizontal pinada (`HorizontalGallery`),
 no meio da home.
 
-## 7. Pendências antes de publicar
+## 7. SEO e compartilhamento
 
-Estes são placeholders — precisam dos dados reais da cliente:
+### Meta tags
 
-- [ ] **E-mail** em `src/data/site.ts` (`contato@marianacorrea.com.br` é suposição)
-- [ ] **URLs de Instagram / LinkedIn / Behance** — hoje apontam para a home de cada rede
-- [ ] Telefone/WhatsApp, se ela quiser (campo `telefone` existe mas não é usado em lugar nenhum)
-- [ ] Confirmar cidade/estado (`local` está como "Brasil")
-- [ ] Confirmar o ano de cada projeto — foram inferidos do PDF
-- [ ] Retrato em resolução maior: o atual foi extraído do PDF (507×793)
+O `Base.astro` monta o `<head>` inteiro. As props que mudam o resultado:
 
-Ideias que ficaram fora do escopo: `@astrojs/sitemap` + `robots.txt`, formulário de
-contato, versão em inglês, página de cada serviço.
+| Prop | Padrão | Para quê |
+| --- | --- | --- |
+| `titulo` | obrigatória | Vira `<title>`, `og:title` e `twitter:title` |
+| `descricao` | `site.descricao` | `<meta name="description">` e as versões og/twitter |
+| `imagem` | `site.og.imagem` | Caminho da imagem de compartilhamento |
+| `imagemAlt` | `site.og.alt` | Texto alternativo dessa imagem |
+| `tipo` | `website` | `og:type`. Home e `/sobre` usam `profile`, projeto usa `article` |
+| `semIndice` | `false` | Emite `noindex, follow`. Só a 404 usa |
+| `dadosEstruturados` | `[]` | Blocos JSON-LD montados em `src/data/jsonld.ts` |
+
+O canonical tira a barra final (`/projetos`, não `/projetos/`), que é como o Cloudflare
+serve as páginas. O sitemap é serializado da mesma forma, senão os dois se contradizem.
+
+### Imagem de compartilhamento
+
+WebP não é lido de forma confiável pelo LinkedIn nem pelo WhatsApp quando vem em
+`og:image`. Por isso as imagens do site continuam WebP, mas as de compartilhamento
+são JPEG.
+
+Todas têm 1200×630. Essa medida está declarada em `site.og` e sai no `og:image:width`
+e `og:image:height`, então trocar o tamanho de uma imagem sem trocar de todas faz a
+meta tag mentir.
+
+- Site inteiro: `public/img/og.jpg`
+- Projeto: `public/img/projetos/<slug>-og.jpg`, apontado pelo campo `og` no frontmatter.
+  Sem esse campo o projeto cai na imagem do site.
+
+Para gerar a de um projeto novo a partir da capa (troque `SLUG`):
+
+```bash
+node -e "const sharp=require('sharp');sharp('public/img/projetos/SLUG-cover.webp').resize(1200,630,{fit:'cover',position:sharp.strategy.attention}).jpeg({quality:84,mozjpeg:true}).toFile('public/img/projetos/SLUG-og.jpg')"
+```
+
+O `sharp` já vem junto com o Astro. O corte por `attention` acerta o assunto na maioria
+das capas, mas olhe o arquivo antes de subir.
+
+### Dados estruturados
+
+`src/data/jsonld.ts` monta os blocos JSON-LD. `pessoa` e `website` entram em toda página
+indexável; cada página acrescenta o tipo dela (`ProfilePage`, `CollectionPage`,
+`AboutPage`, `CreativeWork`) e a trilha de navegação.
+
+O `sameAs` da `pessoa` vem de `redesPublicadas`, que filtra as redes marcadas com
+`pendente: true`. Enquanto as URLs forem placeholder elas ficam fora do JSON-LD e também
+do rodapé e da seção de contato. Ao receber as URLs reais, tire a flag em `site.redes`.
+
+### Sitemap e robots
+
+`@astrojs/sitemap` gera `sitemap-index.xml` no build, sem a 404. O `public/robots.txt`
+aponta para ele e libera tudo.
 
 ---
 
-## 8. Decisões tomadas (e por quê)
+## 8. Deploy no Cloudflare Workers
+
+O deploy é de assets estáticos: sem adapter, sem SSR, sem binding.
+
+O `wrangler.jsonc` na raiz precisa existir. Sem ele o Wrangler roda o auto-config,
+injeta o `@astrojs/cloudflare` e gera um `name` a partir do `package.json`. Como esse
+nome tem ponto (`marianacorrea.com.br`) e nome de Worker só aceita letras, números e
+hífen, o build quebra antes de terminar.
+
+| Campo | Valor |
+| --- | --- |
+| Worker | `marianacorrea-com-br` |
+| Build command | `npm run build` |
+| Deploy command | `npx wrangler deploy` |
+
+`html_handling: "auto-trailing-slash"` faz `/projetos` e `/projetos/` caírem na mesma
+página, e `not_found_handling: "404-page"` entrega o `dist/404.html` em vez do erro
+padrão do Cloudflare.
+
+---
+
+## 9. Pendências antes de publicar
+
+Placeholders que dependem de dados da cliente:
+
+- [ ] **E-mail** em `src/data/site.ts` (`contato@marianacorrea.com.br` é suposição)
+- [ ] **URLs de Instagram / LinkedIn / Behance.** As três estão com `pendente: true` e
+  por isso não aparecem no site nem no JSON-LD. Ao colocar a URL real, tire a flag
+- [ ] Telefone/WhatsApp, se ela quiser (campo `telefone` existe mas não é usado)
+- [ ] Confirmar cidade/estado (`local` está como "Brasil"; o JSON-LD só declara `BR`)
+- [ ] Confirmar o ano de cada projeto, inferidos do PDF
+- [ ] Confirmar a cidade da Salví. O PDF trazia "Criciúma/PR" e ficou "Criciúma/SC",
+  porque Criciúma fica em Santa Catarina
+- [ ] Retrato em resolução maior: o atual foi extraído do PDF (507×793)
+
+Depois de apontar o domínio, conferir o preview de link no
+[Sharing Debugger](https://developers.facebook.com/tools/debug/) e no
+[Post Inspector](https://www.linkedin.com/post-inspector/).
+
+Fora do escopo: formulário de contato, versão em inglês, página por serviço, analytics.
+
+---
+
+## 10. Decisões tomadas (e por quê)
 
 - **Imagens vieram do PDF.** As páginas do `Portfolio.pdf` são imagens de 1920×1080;
   foram extraídas em resolução nativa e recortadas. Os slides que tinham o painel de

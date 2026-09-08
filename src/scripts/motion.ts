@@ -294,18 +294,8 @@ function iniciarCursor() {
   const pontoY = gsap.quickTo(ponto, 'y', { duration: 0.12, ease: 'power3' });
 
   let visivel = false;
-
-  window.addEventListener('mousemove', (evento) => {
-    if (!visivel) {
-      visivel = true;
-      gsap.set([anel, ponto], { x: evento.clientX, y: evento.clientY });
-      cursor.classList.remove('opacity-0');
-    }
-    anelX(evento.clientX);
-    anelY(evento.clientY);
-    pontoX(evento.clientX);
-    pontoY(evento.clientY);
-  });
+  let px = -1;
+  let py = -1;
 
   const base =
     'absolute left-0 top-0 grid place-items-center rounded-full border transition-[width,height,background-color,border-color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]';
@@ -317,7 +307,11 @@ function iniciarCursor() {
     drag: { classe: 'size-24 border-lime bg-lime', rotulo: 'Arraste' },
   };
 
+  let atual = '';
+
   const aplicar = (chave: string) => {
+    if (chave === atual) return;
+    atual = chave;
     const estado = estados[chave] ?? estados.padrao;
     anel.className = `${base} ${estado.classe}`;
     rotulo.textContent = estado.rotulo;
@@ -331,10 +325,56 @@ function iniciarCursor() {
 
   aplicar('padrao');
 
-  document.querySelectorAll<HTMLElement>('a, button, [data-cursor]').forEach((alvo) => {
-    const tipo = alvo.dataset.cursor || 'link';
-    alvo.addEventListener('mouseenter', () => aplicar(tipo));
-    alvo.addEventListener('mouseleave', () => aplicar('padrao'));
+  const resolver = () => {
+    if (px < 0) return;
+    const sob = document.elementFromPoint(px, py);
+    const alvo = sob?.closest<HTMLElement>('[data-cursor], a, button');
+    if (!alvo || alvo.hasAttribute('disabled')) {
+      aplicar('padrao');
+      return;
+    }
+    aplicar(alvo.dataset.cursor || 'link');
+  };
+
+  let agendado = false;
+  const agendar = () => {
+    if (agendado) return;
+    agendado = true;
+    requestAnimationFrame(() => {
+      agendado = false;
+      resolver();
+    });
+  };
+
+  window.addEventListener('mousemove', (evento) => {
+    px = evento.clientX;
+    py = evento.clientY;
+    if (!visivel) {
+      visivel = true;
+      gsap.set([anel, ponto], { x: px, y: py });
+      cursor.classList.remove('opacity-0');
+    }
+    anelX(px);
+    anelY(py);
+    pontoX(px);
+    pontoY(py);
+    agendar();
+  });
+
+  window.addEventListener('scroll', agendar, { passive: true });
+  window.addEventListener('resize', agendar);
+  document.addEventListener('mc:pronto', agendar);
+
+  document.addEventListener('mouseleave', () => {
+    px = -1;
+    py = -1;
+    aplicar('padrao');
+    cursor.classList.add('opacity-0');
+    visivel = false;
+  });
+
+  document.addEventListener('mouseenter', () => {
+    if (px >= 0) cursor.classList.remove('opacity-0');
   });
 }
 

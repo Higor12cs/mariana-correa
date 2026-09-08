@@ -9,6 +9,7 @@ ordem: 5
 destaque: true
 cor: "#7A3B28"
 capa: "/img/projetos/midy-butique-cover.webp"
+og: "/img/projetos/midy-butique-og.jpg"
 imagemIntro: "/img/projetos/midy-butique-01.webp"
 galeria:
   - src: "/img/projetos/midy-butique-02.webp"

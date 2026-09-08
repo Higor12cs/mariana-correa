@@ -1,6 +1,6 @@
 ---
 import Slashes from './Slashes.astro';
-import { navegacao, site } from '../data/site';
+import { navegacao, redesPublicadas, site } from '../data/site';
 
 const ano = new Date().getFullYear();
 ---
@@ -39,11 +39,11 @@ const ano = new Date().getFullYear();
         {site.email}
       </a>
       {
-        site.redes.map((rede) => (
+        redesPublicadas.map((rede) => (
           <a
             href={rede.url}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             data-cursor="link"
             class="w-fit text-sm font-light text-paper/70 transition-colors hover:text-lime"
           >

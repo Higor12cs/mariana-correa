@@ -5,7 +5,8 @@ import Slashes from '../components/Slashes.astro';
 import Marquee from '../components/Marquee.astro';
 import ProjectIndex from '../components/ProjectIndex.astro';
 import HorizontalGallery from '../components/HorizontalGallery.astro';
-import { numeros, servicos, site } from '../data/site';
+import { numeros, redesPublicadas, servicos, site } from '../data/site';
+import { grafoBase, pessoa, website } from '../data/jsonld';
 
 const projetos = (await getCollection('projetos', ({ data }) => !data.rascunho)).sort(
   (a, b) => a.data.ordem - b.data.ordem,
@@ -25,7 +26,24 @@ const pecas = projetos.flatMap((projeto) =>
 );
 ---
 
-<Base titulo={site.nome} intro>
+<Base
+  titulo={site.nome}
+  intro
+  tipo="profile"
+  dadosEstruturados={grafoBase([
+    pessoa,
+    website,
+    {
+      '@type': 'ProfilePage',
+      '@id': `${site.url}/#pagina`,
+      url: site.url,
+      name: `${site.nome} — ${site.papel}`,
+      isPartOf: { '@id': website['@id'] },
+      about: { '@id': pessoa['@id'] },
+      inLanguage: 'pt-BR',
+    },
+  ])}
+>
   <section
     id="topo"
     class="relative flex min-h-svh flex-col justify-between overflow-hidden pb-12 pt-24"
@@ -246,11 +264,11 @@ const pecas = projetos.flatMap((projeto) =>
 
       <div class="mt-14 flex flex-wrap gap-x-8 gap-y-3">
         {
-          site.redes.map((rede) => (
+          redesPublicadas.map((rede) => (
             <a
               href={rede.url}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               data-cursor="link"
               class="fade-up text-[0.6875rem] font-medium uppercase tracking-[0.22em] text-paper/50 transition-colors hover:text-lime"
             >

@@ -11,13 +11,26 @@ interface Props {
   titulo: string;
   descricao?: string;
   imagem?: string;
+  imagemAlt?: string;
+  tipo?: 'website' | 'article' | 'profile';
+  semIndice?: boolean;
   intro?: boolean;
+  dadosEstruturados?: Record<string, unknown>[];
 }
 
-const { titulo, descricao = site.descricao, imagem = '/img/og.webp', intro = false } = Astro.props;
+const {
+  titulo,
+  descricao = site.descricao,
+  imagem = site.og.imagem,
+  imagemAlt = site.og.alt,
+  tipo = 'website',
+  semIndice = false,
+  intro = false,
+  dadosEstruturados = [],
+} = Astro.props;
 
-const tituloCompleto = titulo === site.nome ? `${site.nome} — ${site.papel}` : `${titulo} — ${site.nome}`;
-const canonica = new URL(Astro.url.pathname, Astro.site);
+const tituloCompleto = titulo === site.nome ? `${site.nome} — ${site.papelSeo}` : `${titulo} — ${site.nome}`;
+const canonica = new URL(Astro.url.pathname.replace(/(.)\/$/, '$1'), Astro.site);
 const imagemAbsoluta = new URL(imagem, Astro.site);
 ---
 
@@ -26,32 +39,65 @@ const imagemAbsoluta = new URL(imagem, Astro.site);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#111111" />
     <link rel="canonical" href={canonica} />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
 
     <title>{tituloCompleto}</title>
     <meta name="description" content={descricao} />
     <meta name="author" content={site.nome} />
+    {semIndice && <meta name="robots" content="noindex, follow" />}
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={tipo} />
     <meta property="og:locale" content="pt_BR" />
     <meta property="og:site_name" content={site.nome} />
     <meta property="og:title" content={tituloCompleto} />
     <meta property="og:description" content={descricao} />
     <meta property="og:url" content={canonica} />
     <meta property="og:image" content={imagemAbsoluta} />
+    <meta property="og:image:type" content={site.og.tipo} />
+    <meta property="og:image:width" content={String(site.og.largura)} />
+    <meta property="og:image:height" content={String(site.og.altura)} />
+    <meta property="og:image:alt" content={imagemAlt} />
+
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={tituloCompleto} />
+    <meta name="twitter:description" content={descricao} />
+    <meta name="twitter:image" content={imagemAbsoluta} />
+    <meta name="twitter:image:alt" content={imagemAlt} />
 
     <Font cssVariable="--font-archivo" preload />
     <Font cssVariable="--font-jakarta" preload />
+
+    {
+      dadosEstruturados.map((bloco) => (
+        <script
+          type="application/ld+json"
+          is:inline
+          set:html={JSON.stringify(bloco)}
+        />
+      ))
+    }
   </head>
 
   <body>
+    <a
+      href="#conteudo"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-ink focus:px-4 focus:py-2 focus:text-[0.6875rem] focus:uppercase focus:tracking-[0.22em] focus:text-paper"
+    >
+      Pular para o conteúdo
+    </a>
+
     {intro && <Preloader />}
     <Cursor />
     <Header />
 
-    <main id="conteudo">
+    <main id="conteudo" tabindex="-1">
       <slot />
     </main>
 

@@ -4,11 +4,12 @@ cliente: "Salví Clínica"
 segmento: "Saúde e Estética"
 ano: "2025"
 servicos: ["Naming", "Branding", "Identidade Visual"]
-resumo: "Clínica multidisciplinar em Criciúma/PR, com foco nas áreas de fisioterapia e estética."
+resumo: "Clínica multidisciplinar em Criciúma/SC, com foco nas áreas de fisioterapia e estética."
 ordem: 1
 destaque: true
 cor: "#4A2739"
 capa: "/img/projetos/salvi-clinica-cover.webp"
+og: "/img/projetos/salvi-clinica-og.jpg"
 imagemIntro: "/img/projetos/salvi-clinica-01.webp"
 galeria:
   - src: "/img/projetos/salvi-clinica-02.webp"

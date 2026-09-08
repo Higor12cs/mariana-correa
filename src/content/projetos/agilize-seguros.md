@@ -9,6 +9,7 @@ ordem: 4
 destaque: true
 cor: "#1B2C6B"
 capa: "/img/projetos/agilize-seguros-cover.webp"
+og: "/img/projetos/agilize-seguros-og.jpg"
 imagemIntro: "/img/projetos/agilize-seguros-01.webp"
 galeria:
   - src: "/img/projetos/agilize-seguros-02.webp"

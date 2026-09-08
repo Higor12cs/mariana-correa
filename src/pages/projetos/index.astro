@@ -1,6 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import { grafoBase, pessoa, trilha, website } from '../../data/jsonld';
+import { site } from '../../data/site';
 
 const projetos = (await getCollection('projetos', ({ data }) => !data.rascunho)).sort(
   (a, b) => a.data.ordem - b.data.ordem,
@@ -10,6 +12,32 @@ const projetos = (await getCollection('projetos', ({ data }) => !data.rascunho))
 <Base
   titulo="Projetos"
   descricao="Branding, identidade visual, naming e direção de arte para marcas de saúde, arquitetura, moda e seguros."
+  dadosEstruturados={grafoBase([
+    pessoa,
+    website,
+    trilha([
+      { nome: 'Início', url: '/' },
+      { nome: 'Projetos', url: '/projetos' },
+    ]),
+    {
+      '@type': 'CollectionPage',
+      '@id': `${site.url}/projetos#pagina`,
+      url: `${site.url}/projetos`,
+      name: 'Projetos',
+      inLanguage: 'pt-BR',
+      isPartOf: { '@id': website['@id'] },
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: projetos.length,
+        itemListElement: projetos.map((projeto, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: projeto.data.titulo,
+          url: `${site.url}/projetos/${projeto.id}`,
+        })),
+      },
+    },
+  ])}
 >
   <section class="relative overflow-hidden pb-16 pt-40 md:pb-24 md:pt-56">
     <div class="glow -right-32 top-0 size-[38vw] min-h-[18rem] min-w-[18rem] opacity-70"></div>
@@ -41,7 +69,7 @@ const projetos = (await getCollection('projetos', ({ data }) => !data.rascunho))
             <div class="relative aspect-[4/3] overflow-hidden bg-ink/5" data-img data-skew>
               <img
                 src={projeto.data.capa}
-                alt={projeto.data.titulo}
+                alt={`Identidade visual do projeto ${projeto.data.titulo}`}
                 width="1200"
                 height="1080"
                 loading={i < 2 ? 'eager' : 'lazy'}

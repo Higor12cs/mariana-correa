@@ -16,6 +16,7 @@ const projetos = defineCollection({
     rascunho: z.boolean().default(false),
     cor: z.string().default('#111111'),
     capa: z.string(),
+    og: z.string().optional(),
     imagemIntro: z.string().optional(),
     galeria: z
       .array(z.object({ src: z.string(), alt: z.string() }))

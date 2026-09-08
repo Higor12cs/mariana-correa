@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Marquee from '../components/Marquee.astro';
 import { numeros, site } from '../data/site';
+import { grafoBase, pessoa, trilha, website } from '../data/jsonld';
 
 const trajetoria = [
   {
@@ -40,6 +41,24 @@ const competencias = [
 <Base
   titulo="Sobre"
   descricao="Publicitária, estrategista de marcas e diretora de arte com mais de 6 anos de experiência em branding, comunicação e direção criativa."
+  tipo="profile"
+  dadosEstruturados={grafoBase([
+    pessoa,
+    website,
+    trilha([
+      { nome: 'Início', url: '/' },
+      { nome: 'Sobre', url: '/sobre' },
+    ]),
+    {
+      '@type': 'AboutPage',
+      '@id': `${site.url}/sobre#pagina`,
+      url: `${site.url}/sobre`,
+      name: `Sobre — ${site.nome}`,
+      inLanguage: 'pt-BR',
+      isPartOf: { '@id': website['@id'] },
+      mainEntity: { '@id': pessoa['@id'] },
+    },
+  ])}
 >
   <section class="relative overflow-hidden pb-16 pt-40 md:pb-24 md:pt-56">
     <div class="glow -left-24 top-10 size-[36vw] min-h-[18rem] min-w-[18rem] opacity-70"></div>

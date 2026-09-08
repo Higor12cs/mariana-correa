@@ -2,18 +2,28 @@ export const site = {
   nome: 'Mariana Corrêa',
   marca: 'M//C',
   papel: 'Estrategista de Marcas | Designer | Direção Criativa',
+  papelSeo: 'Estrategista de Marcas e Direção Criativa',
   descricao:
     'Estrategista de marcas, designer e diretora de arte. Há mais de 6 anos transformando objetivos de negócio em soluções criativas, consistentes e relevantes.',
   url: 'https://marianacorrea.com.br',
   email: 'contato@marianacorrea.com.br',
   telefone: '',
   local: 'Brasil',
+  og: {
+    imagem: '/img/og.jpg',
+    largura: 1200,
+    altura: 630,
+    tipo: 'image/jpeg',
+    alt: 'Portfólio de Mariana Corrêa — estrategista de marcas, designer e direção criativa',
+  },
   redes: [
-    { nome: 'Instagram', url: 'https://instagram.com/', handle: '@marianacorrea' },
-    { nome: 'LinkedIn', url: 'https://linkedin.com/in/', handle: 'in/marianacorrea' },
-    { nome: 'Behance', url: 'https://behance.net/', handle: 'behance.net' },
+    { nome: 'Instagram', url: 'https://instagram.com/', handle: '@marianacorrea', pendente: true },
+    { nome: 'LinkedIn', url: 'https://linkedin.com/in/', handle: 'in/marianacorrea', pendente: true },
+    { nome: 'Behance', url: 'https://behance.net/', handle: 'behance.net', pendente: true },
   ],
 };
+
+export const redesPublicadas = site.redes.filter((rede) => !rede.pendente);
 
 export const navegacao = [
   { rotulo: 'Início', href: '/' },

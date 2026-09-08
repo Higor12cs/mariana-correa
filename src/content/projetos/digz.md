@@ -9,6 +9,7 @@ ordem: 3
 destaque: true
 cor: "#0E0E0E"
 capa: "/img/projetos/digz-cover.webp"
+og: "/img/projetos/digz-og.jpg"
 imagemIntro: "/img/projetos/digz-01.webp"
 galeria:
   - src: "/img/projetos/digz-02.webp"

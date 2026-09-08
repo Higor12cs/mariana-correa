@@ -9,6 +9,7 @@ ordem: 2
 destaque: true
 cor: "#3D4F3F"
 capa: "/img/projetos/jheniffer-soares-cover.webp"
+og: "/img/projetos/jheniffer-soares-og.jpg"
 imagemIntro: "/img/projetos/jheniffer-soares-01.webp"
 galeria:
   - src: "/img/projetos/jheniffer-soares-02.webp"

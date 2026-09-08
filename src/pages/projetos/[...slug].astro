@@ -3,6 +3,7 @@ import type { GetStaticPaths } from 'astro';
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Slashes from '../../components/Slashes.astro';
+import { grafoBase, pessoa, projetoComoObra, trilha, website } from '../../data/jsonld';
 
 export const getStaticPaths = (async () => {
   const projetos = (await getCollection('projetos', ({ data }) => !data.rascunho)).sort(
@@ -30,7 +31,31 @@ const ficha = [
 ];
 ---
 
-<Base titulo={data.titulo} descricao={data.resumo} imagem={data.capa}>
+<Base
+  titulo={data.titulo}
+  descricao={data.resumo}
+  imagem={data.og}
+  imagemAlt={`${data.titulo} — projeto de ${data.servicos.join(', ').toLowerCase()}`}
+  tipo="article"
+  dadosEstruturados={grafoBase([
+    pessoa,
+    website,
+    projetoComoObra({
+      titulo: data.titulo,
+      resumo: data.resumo,
+      ano: data.ano,
+      segmento: data.segmento,
+      servicos: data.servicos,
+      capa: data.og ?? data.capa,
+      url: `/projetos/${projeto.id}`,
+    }),
+    trilha([
+      { nome: 'Início', url: '/' },
+      { nome: 'Projetos', url: '/projetos' },
+      { nome: data.titulo, url: `/projetos/${projeto.id}` },
+    ]),
+  ])}
+>
   <article>
     <header
       class="relative overflow-hidden pb-16 pt-40 text-paper md:pb-24 md:pt-56"

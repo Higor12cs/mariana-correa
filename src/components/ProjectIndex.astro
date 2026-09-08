@@ -10,6 +10,7 @@ const { projetos } = Astro.props;
 <div class="relative" data-project-index>
   <div
     data-project-preview
+    aria-hidden="true"
     class="pointer-events-none fixed left-0 top-0 z-30 hidden aspect-[4/3] w-[24rem] overflow-hidden opacity-0 lg:block"
   >
     {
@@ -17,6 +18,8 @@ const { projetos } = Astro.props;
         <img
           data-preview-src={projeto.data.capa}
           alt=""
+          width="1200"
+          height="1080"
           decoding="async"
           data-preview-slide={i}
           class="absolute inset-0 size-full object-cover opacity-0"
@@ -53,7 +56,9 @@ const { projetos } = Astro.props;
 
             <img
               src={projeto.data.capa}
-              alt={projeto.data.titulo}
+              alt={`Identidade visual do projeto ${projeto.data.titulo}`}
+              width="1200"
+              height="1080"
               loading="lazy"
               decoding="async"
               class="aspect-[16/10] w-full object-cover md:hidden"
