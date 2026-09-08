@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://marianacorrea.com.br',
+  site: process.env.SITE_URL ?? 'https://mariana-correa.higor12cs.workers.dev',
   integrations: [sitemap({ filter: (pagina) => !pagina.includes('/404') })],
   vite: {
     plugins: [tailwindcss()],

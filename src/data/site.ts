@@ -5,7 +5,7 @@ export const site = {
   papelSeo: 'Estrategista de Marcas e Direção Criativa',
   descricao:
     'Estrategista de marcas, designer e diretora de arte. Há mais de 6 anos transformando objetivos de negócio em soluções criativas, consistentes e relevantes.',
-  url: 'https://marianacorrea.com.br',
+  url: import.meta.env.SITE.replace(/\/$/, ''),
   email: 'contato@marianacorrea.com.br',
   telefone: '',
   local: 'Brasil',

@@ -96,8 +96,9 @@ src/
     projetos/index.astro
     projetos/[...slug].astro
     404.astro
+    robots.txt.ts           <- robots.txt gerado a partir do `site`
 public/
-  robots.txt, site.webmanifest
+  site.webmanifest
   favicon.ico, favicon.svg, apple-touch-icon.png, icon-192.png, icon-512.png
   img/
     projetos/<slug>-cover.webp, <slug>-01.webp, <slug>-02.webp, <slug>-og.jpg
@@ -322,8 +323,27 @@ do rodapé e da seção de contato. Ao receber as URLs reais, tire a flag em `si
 
 ### Sitemap e robots
 
-`@astrojs/sitemap` gera `sitemap-index.xml` no build, sem a 404. O `public/robots.txt`
-aponta para ele e libera tudo.
+`@astrojs/sitemap` gera `sitemap-index.xml` no build, sem a 404. O `robots.txt` é gerado
+por `src/pages/robots.txt.ts` e monta a linha `Sitemap:` a partir do `site`, então nunca
+fica apontando para um domínio antigo.
+
+### Domínio
+
+Um lugar só decide todas as URLs absolutas: `site` no `astro.config.mjs`. Dele saem
+canonical, `og:image`, sitemap, robots e os `@id` do JSON-LD. `site.url` em `site.ts` lê
+`import.meta.env.SITE`, que é o mesmo valor, de propósito: se alguém escrever o domínio
+à mão em dois lugares, um dia eles divergem.
+
+Hoje o valor é `https://mariana-correa.higor12cs.workers.dev`, que é provisório. O
+domínio final ainda não foi definido. Para trocar, mexa só no `astro.config.mjs`.
+
+Dá para sobrescrever num build sem tocar no arquivo:
+
+```bash
+SITE_URL=https://outro-dominio.com npm run build
+```
+
+Serve para testar, ou para o painel do Cloudflare apontar um preview em outro endereço.
 
 ---
 
@@ -350,10 +370,10 @@ O `name` do `wrangler.jsonc` precisa ser igual ao do Worker no painel. Se diverg
 `npx wrangler deploy` rodado da máquina cria um Worker separado em vez de atualizar o
 que está no ar.
 
-Enquanto o DNS de `marianacorrea.com.br` não apontar para o Worker, o site vive em
-`https://mariana-correa.higor12cs.workers.dev`. As meta tags são absolutas para o
-domínio final (`site` em `astro.config.mjs`), então validador de preview de link vai
-falhar até a virada. Isso é esperado e não se resolve no código.
+O site está em `https://mariana-correa.higor12cs.workers.dev`. Preview de link só
+funciona se o `site` do `astro.config.mjs` for o mesmo endereço que está no ar: a
+`og:image` é absoluta, e apontar para um domínio que ainda não responde dá 404 no
+crawler mesmo com a imagem publicada.
 
 ---
 
@@ -371,7 +391,7 @@ Placeholders que dependem de dados da cliente:
   porque Criciúma fica em Santa Catarina
 - [ ] Retrato em resolução maior: o atual foi extraído do PDF (507×793)
 
-Depois de apontar o domínio, conferir o preview de link no
+Definido o domínio final, trocar o `site` e conferir o preview de link no
 [Sharing Debugger](https://developers.facebook.com/tools/debug/) e no
 [Post Inspector](https://www.linkedin.com/post-inspector/).
 
