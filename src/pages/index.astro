@@ -12,7 +12,7 @@ const projetos = (await getCollection('projetos', ({ data }) => !data.rascunho))
   (a, b) => a.data.ordem - b.data.ordem,
 );
 
-const especialidades = ['Branding', 'Identidade Visual', 'Naming', 'Direção de Arte', 'Estratégia'];
+const especialidades = ['Branding', 'Identidade Visual', 'Naming', 'Direção Criativa', 'Estratégia'];
 
 const pecas = projetos.flatMap((projeto) =>
   [projeto.data.imagemIntro, ...projeto.data.galeria.map((g) => g.src)]
@@ -76,8 +76,12 @@ const pecas = projetos.flatMap((projeto) =>
     </div>
 
     <div class="shell relative z-10 flex items-end justify-between gap-8" data-reveal="hero">
-      <h1 class="display-xl">
-        <span class="reveal-line"><span>PORTFÓLIO</span></span>
+      <h1
+        class="max-w-[20ch] font-display text-[clamp(2rem,5.6vw,5.25rem)] font-light leading-[1.04] tracking-[-0.04em]"
+      >
+        <span class="reveal-line"><span>O próximo nível da</span></span>
+        <span class="reveal-line"><span>sua marca começa</span></span>
+        <span class="reveal-line"><span>onde o óbvio termina.</span></span>
       </h1>
       <Slashes class="mb-3 hidden h-[clamp(3rem,7vw,7rem)] w-auto shrink-0 sm:block" />
     </div>
@@ -86,8 +90,7 @@ const pecas = projetos.flatMap((projeto) =>
   <section class="bg-ink py-28 text-paper md:py-40" data-theme="escuro">
     <div class="shell grid gap-14 lg:grid-cols-[1fr_1.1fr] lg:gap-24" data-reveal>
       <div>
-        <span class="eyebrow fade-up text-lime">Como eu trabalho</span>
-        <div class="mt-10 flex gap-8">
+        <div class="flex flex-wrap gap-x-10 gap-y-8">
           {
             numeros.map((numero) => (
               <div class="fade-up">
@@ -105,19 +108,17 @@ const pecas = projetos.flatMap((projeto) =>
 
       <div>
         <h2 class="display-md">
-          <span class="reveal-line"><span>O desenho vem depois</span></span>
-          <span class="reveal-line"><span>da <em class="not-italic text-lime">decisão de negócio</em>.</span></span>
+          <span class="reveal-line"
+            ><span>Criando marcas <em class="not-italic text-lime">disruptivas</em></span></span
+          >
+          <span class="reveal-line"><span>e inconfundíveis na percepção.</span></span>
         </h2>
         <div class="mt-10 max-w-xl space-y-5 text-base font-light leading-relaxed text-paper/60">
           <p class="fade-up">
-            Minha experiência passa por agências, projetos independentes e diferentes segmentos, sempre
-            buscando transformar objetivos de negócio em soluções criativas, consistentes e
-            relevantes.
-          </p>
-          <p class="fade-up">
-            Trabalho na construção e evolução de identidades visuais, campanhas institucionais e
-            comerciais, comunicação digital e estratégias voltadas ao fortalecimento do
-            posicionamento e do valor percebido das marcas.
+            Acredito que marcas relevantes são construídas a partir de uma visão clara de negócio,
+            estratégia e uma relação próxima com quem está por trás delas. Meu trabalho parte do
+            entendimento da essência e dos objetivos de cada negócio para transformar posicionamento
+            em uma expressão de marca consistente, distinta e capaz de gerar valor.
           </p>
         </div>
         <a
@@ -160,12 +161,15 @@ const pecas = projetos.flatMap((projeto) =>
     </div>
   </section>
 
-  <HorizontalGallery eyebrow="Bastidores" titulo="Aplicações" pecas={pecas} />
+  <HorizontalGallery
+    eyebrow="Da estratégia à aplicação"
+    titulo="A marca fora do papel"
+    pecas={pecas}
+  />
 
   <section class="bg-ink py-24 text-paper md:py-36" data-theme="escuro">
     <div class="shell" data-reveal>
       <div class="flex flex-wrap items-end justify-between gap-6">
-        <span class="eyebrow fade-up text-lime">O que eu faço</span>
         <h2 class="display-lg">
           <span class="reveal-line"><span>Serviços</span></span>
         </h2>
@@ -195,8 +199,11 @@ const pecas = projetos.flatMap((projeto) =>
   </section>
 
   <section class="py-24 md:py-36">
-    <div class="shell grid items-center gap-12 lg:grid-cols-[0.85fr_1fr] lg:gap-20" data-reveal>
-      <div class="relative aspect-[3/4] overflow-hidden bg-ink/5" data-img>
+    <div class="shell grid items-center gap-12 lg:grid-cols-[0.55fr_1fr] lg:gap-20" data-reveal>
+      <div
+        class="relative aspect-[3/4] w-full max-w-xs overflow-hidden bg-ink/5 lg:max-w-sm"
+        data-img
+      >
         <img
           src="/img/mariana-retrato.webp"
           alt="Retrato de Mariana Corrêa"
@@ -212,19 +219,25 @@ const pecas = projetos.flatMap((projeto) =>
         <span class="eyebrow fade-up opacity-45">Sobre</span>
         <h2 class="display-md mt-6">
           <span class="reveal-line"><span>Publicitária,</span></span>
-          <span class="reveal-line"><span>estrategista de marcas</span></span>
-          <span class="reveal-line"><span>e diretora de arte.</span></span>
+          <span class="reveal-line"><span>Estrategista de Marca</span></span>
+          <span class="reveal-line"><span>e Diretora de Arte.</span></span>
         </h2>
         <div class="mt-8 max-w-lg space-y-5 text-base font-light leading-relaxed opacity-65">
           <p class="fade-up">
-            Também tive a oportunidade de participar da estruturação e gestão de uma agência de
-            marketing como co-fundadora, experiência que ampliou minha visão sobre negócios,
-            processos, clientes e liderança de equipes criativas.
+            Com mais de 6 anos de experiência em design, branding, marketing e comunicação, minha
+            trajetória começou no design e evoluiu para uma atuação cada vez mais estratégica,
+            desenvolvendo identidades visuais, projetos de branding, campanhas e sistemas de
+            comunicação para marcas de diferentes segmentos e momentos de negócio.
           </p>
           <p class="fade-up">
-            Tenho um perfil colaborativo, organizado e hands-on, com facilidade para assumir
-            responsabilidades, conectar diferentes áreas e transformar estratégia em trabalho que
-            realmente acontece.
+            Passei por agências, projetos independentes e também pela experiência de cofundar e
+            participar da gestão de uma agência de marketing, ampliando minha visão sobre clientes,
+            negócios, processos e liderança.
+          </p>
+          <p class="fade-up">
+            Hoje, meu trabalho está na interseção entre estratégia e criação: entender o que uma
+            marca precisa representar, construir seu posicionamento e traduzir isso em uma
+            identidade consistente, relevante e capaz de gerar valor.
           </p>
         </div>
         <a

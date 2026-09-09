@@ -8,6 +8,10 @@ Portfólio da Mariana Corrêa. Astro 7 estático + Tailwind 4 + Lenis + GSAP.
 estrutura de pastas, como adicionar um projeto novo, como o sistema de animação
 funciona e o que ainda é placeholder. Consulte antes de mexer em qualquer coisa.
 
+**[CONTEUDO.md](./CONTEUDO.md)** é o guia de conteúdo entregue à cliente: onde mora
+cada texto e qual o tamanho de cada imagem. Mantenha em dia ao mudar seção da home,
+campo do `site.ts` ou convenção de imagem.
+
 ## Regras deste projeto
 
 - **Não escreva comentários no código.** O contexto fica no GUIA.md.

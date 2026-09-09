@@ -6,6 +6,9 @@ no espírito das referências enviadas pela cliente.
 
 Este arquivo é a fonte de contexto para quem continuar o projeto — humano ou agente.
 
+Para quem só vai **trocar textos e imagens**, existe o [CONTEUDO.md](./CONTEUDO.md):
+seção por seção do site, com tamanho de cada imagem e onde mora cada texto.
+
 ---
 
 ## 1. Stack
@@ -381,9 +384,10 @@ crawler mesmo com a imagem publicada.
 
 Placeholders que dependem de dados da cliente:
 
-- [ ] **E-mail** em `src/data/site.ts` (`contato@marianacorrea.com.br` é suposição)
-- [ ] **URLs de Instagram / LinkedIn / Behance.** As três estão com `pendente: true` e
-  por isso não aparecem no site nem no JSON-LD. Ao colocar a URL real, tire a flag
+- [x] **E-mail** em `src/data/site.ts` — `mariana.branddesigner@gmail.com`, confirmado
+- [x] **Instagram e LinkedIn** confirmados (`@marianacorrea.co` e `in/mariana-correa20/`)
+- [ ] **URL do Behance.** Está com `pendente: true` e por isso não aparece no site nem
+  no JSON-LD. Ao colocar a URL real, tire a flag
 - [ ] Telefone/WhatsApp, se ela quiser (campo `telefone` existe mas não é usado)
 - [ ] Confirmar cidade/estado (`local` está como "Brasil"; o JSON-LD só declara `BR`)
 - [ ] Confirmar o ano de cada projeto, inferidos do PDF

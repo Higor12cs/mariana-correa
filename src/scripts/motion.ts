@@ -236,6 +236,7 @@ function iniciarHorizontal() {
     }
 
     const distancia = () => Math.max(0, trilho.scrollWidth - viewport.clientWidth);
+    const curso = () => distancia() * 0.55 + window.innerHeight * 0.15;
 
     gsap.to(trilho, {
       x: () => -distancia(),
@@ -243,7 +244,7 @@ function iniciarHorizontal() {
       scrollTrigger: {
         trigger: secao,
         start: 'top top',
-        end: () => `+=${distancia() + window.innerHeight * 0.4}`,
+        end: () => `+=${curso()}`,
         pin: true,
         anticipatePin: 1,
         scrub: 0.9,
@@ -259,7 +260,7 @@ function iniciarHorizontal() {
         scrollTrigger: {
           trigger: secao,
           start: 'top top',
-          end: () => `+=${distancia() + window.innerHeight * 0.4}`,
+          end: () => `+=${curso()}`,
           scrub: true,
           invalidateOnRefresh: true,
         },
@@ -384,7 +385,7 @@ function iniciarPreviewProjetos() {
   if (!indice || !preview || !preciso || reduzido) return;
 
   const slides = preview.querySelectorAll<HTMLImageElement>('[data-preview-slide]');
-  const linhas = indice.querySelectorAll<HTMLElement>('[data-project-row]');
+  const linhas = Array.from(indice.querySelectorAll<HTMLElement>('[data-project-row]'));
 
   const carregar = new IntersectionObserver(
     (entradas) => {
@@ -405,30 +406,68 @@ function iniciarPreviewProjetos() {
   const moverY = gsap.quickTo(preview, 'y', { duration: 0.8, ease: 'power3' });
   const girar = gsap.quickTo(preview, 'rotation', { duration: 1.1, ease: 'power3' });
 
-  window.addEventListener('mousemove', (evento) => {
-    moverX(evento.clientX);
-    moverY(evento.clientY);
-    girar(gsap.utils.clamp(-9, 9, velocidade * 0.6));
-  });
+  let px = -1;
+  let py = -1;
+  let ativa = -2;
 
-  linhas.forEach((linha) => {
-    const indiceLinha = Number(linha.dataset.projectRow);
+  const aplicar = (alvo: number) => {
+    if (alvo === ativa) return;
+    ativa = alvo;
 
-    linha.addEventListener('mouseenter', () => {
-      gsap.to(preview, { opacity: 1, scale: 1, duration: 0.5, ease: 'power3.out' });
-      slides.forEach((slide, i) => {
-        gsap.to(slide, { opacity: i === indiceLinha ? 1 : 0, duration: 0.45 });
-      });
-      linhas.forEach((outra) => {
-        gsap.to(outra, { opacity: outra === linha ? 1 : 0.28, duration: 0.4 });
-      });
+    if (alvo < 0) {
+      gsap.to(preview, { opacity: 0, scale: 0.85, duration: 0.4 });
+      gsap.to(linhas, { opacity: 1, duration: 0.4 });
+      return;
+    }
+
+    gsap.to(preview, { opacity: 1, scale: 1, duration: 0.5, ease: 'power3.out' });
+    slides.forEach((slide, i) => {
+      gsap.to(slide, { opacity: i === alvo ? 1 : 0, duration: 0.45 });
     });
+    linhas.forEach((linha, i) => {
+      gsap.to(linha, { opacity: i === alvo ? 1 : 0.28, duration: 0.4 });
+    });
+  };
+
+  const resolver = () => {
+    if (px < 0) {
+      aplicar(-1);
+      return;
+    }
+    const sob = document.elementFromPoint(px, py);
+    const linha = sob?.closest<HTMLElement>('[data-project-row]');
+    aplicar(linha ? Number(linha.dataset.projectRow) : -1);
+  };
+
+  let agendado = false;
+  const agendar = () => {
+    if (agendado) return;
+    agendado = true;
+    requestAnimationFrame(() => {
+      agendado = false;
+      resolver();
+    });
+  };
+
+  window.addEventListener('mousemove', (evento) => {
+    px = evento.clientX;
+    py = evento.clientY;
+    moverX(px);
+    moverY(py);
+    girar(gsap.utils.clamp(-9, 9, velocidade * 0.6));
+    agendar();
   });
 
-  indice.addEventListener('mouseleave', () => {
-    gsap.to(preview, { opacity: 0, scale: 0.85, duration: 0.4 });
-    gsap.to(linhas, { opacity: 1, duration: 0.4 });
+  window.addEventListener('scroll', agendar, { passive: true });
+  window.addEventListener('resize', agendar);
+
+  document.addEventListener('mouseleave', () => {
+    px = -1;
+    py = -1;
+    aplicar(-1);
   });
+
+  aplicar(-1);
 }
 
 function iniciarMarquees() {
