@@ -10,6 +10,72 @@ const preciso = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
 let velocidade = 0;
 
+type OuvinteApontador = (alvo: Element | null) => void;
+
+const ouvintesApontador: OuvinteApontador[] = [];
+let apontadorX = -1;
+let apontadorY = -1;
+let apontadorDentro = false;
+let apontadorSujo = false;
+
+function observarApontador(ouvinte: OuvinteApontador) {
+  ouvintesApontador.push(ouvinte);
+}
+
+function iniciarApontador() {
+  if (!preciso || reduzido) return;
+
+  const marcar = () => {
+    apontadorSujo = true;
+  };
+
+  window.addEventListener(
+    'mousemove',
+    (evento) => {
+      apontadorX = evento.clientX;
+      apontadorY = evento.clientY;
+      apontadorDentro = true;
+      apontadorSujo = true;
+    },
+    { passive: true },
+  );
+
+  document.addEventListener('mouseleave', () => {
+    apontadorDentro = false;
+    apontadorSujo = true;
+  });
+
+  document.addEventListener('mouseenter', () => {
+    if (apontadorX >= 0) apontadorDentro = true;
+    apontadorSujo = true;
+  });
+
+  window.addEventListener('blur', () => {
+    apontadorDentro = false;
+    apontadorSujo = true;
+  });
+
+  window.addEventListener('resize', marcar);
+  document.addEventListener('mc:pronto', marcar);
+  ScrollTrigger.addEventListener('refresh', marcar);
+
+  let ultimoY = -1;
+
+  gsap.ticker.add(() => {
+    const y = window.scrollY;
+    if (!apontadorSujo && y === ultimoY) return;
+    apontadorSujo = false;
+    ultimoY = y;
+
+    const alvo =
+      apontadorDentro && apontadorX >= 0
+        ? document.elementFromPoint(apontadorX, apontadorY)
+        : null;
+
+    ouvintesApontador.forEach((ouvinte) => ouvinte(alvo));
+  });
+}
+
 function iniciarScroll() {
   if (reduzido) return null;
 
@@ -295,8 +361,6 @@ function iniciarCursor() {
   const pontoY = gsap.quickTo(ponto, 'y', { duration: 0.12, ease: 'power3' });
 
   let visivel = false;
-  let px = -1;
-  let py = -1;
 
   const base =
     'absolute left-0 top-0 grid place-items-center rounded-full border transition-[width,height,background-color,border-color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]';
@@ -326,56 +390,32 @@ function iniciarCursor() {
 
   aplicar('padrao');
 
-  const resolver = () => {
-    if (px < 0) return;
-    const sob = document.elementFromPoint(px, py);
+  observarApontador((sob) => {
     const alvo = sob?.closest<HTMLElement>('[data-cursor], a, button');
-    if (!alvo || alvo.hasAttribute('disabled')) {
-      aplicar('padrao');
-      return;
-    }
-    aplicar(alvo.dataset.cursor || 'link');
-  };
-
-  let agendado = false;
-  const agendar = () => {
-    if (agendado) return;
-    agendado = true;
-    requestAnimationFrame(() => {
-      agendado = false;
-      resolver();
-    });
-  };
-
-  window.addEventListener('mousemove', (evento) => {
-    px = evento.clientX;
-    py = evento.clientY;
-    if (!visivel) {
-      visivel = true;
-      gsap.set([anel, ponto], { x: px, y: py });
-      cursor.classList.remove('opacity-0');
-    }
-    anelX(px);
-    anelY(py);
-    pontoX(px);
-    pontoY(py);
-    agendar();
+    aplicar(!alvo || alvo.hasAttribute('disabled') ? 'padrao' : alvo.dataset.cursor || 'link');
   });
 
-  window.addEventListener('scroll', agendar, { passive: true });
-  window.addEventListener('resize', agendar);
-  document.addEventListener('mc:pronto', agendar);
+  window.addEventListener(
+    'mousemove',
+    (evento) => {
+      const x = evento.clientX;
+      const y = evento.clientY;
+      if (!visivel) {
+        visivel = true;
+        gsap.set([anel, ponto], { x, y });
+        cursor.classList.remove('opacity-0');
+      }
+      anelX(x);
+      anelY(y);
+      pontoX(x);
+      pontoY(y);
+    },
+    { passive: true },
+  );
 
   document.addEventListener('mouseleave', () => {
-    px = -1;
-    py = -1;
-    aplicar('padrao');
     cursor.classList.add('opacity-0');
     visivel = false;
-  });
-
-  document.addEventListener('mouseenter', () => {
-    if (px >= 0) cursor.classList.remove('opacity-0');
   });
 }
 
@@ -406,8 +446,6 @@ function iniciarPreviewProjetos() {
   const moverY = gsap.quickTo(preview, 'y', { duration: 0.8, ease: 'power3' });
   const girar = gsap.quickTo(preview, 'rotation', { duration: 1.1, ease: 'power3' });
 
-  let px = -1;
-  let py = -1;
   let ativa = -2;
 
   const aplicar = (alvo: number) => {
@@ -429,43 +467,20 @@ function iniciarPreviewProjetos() {
     });
   };
 
-  const resolver = () => {
-    if (px < 0) {
-      aplicar(-1);
-      return;
-    }
-    const sob = document.elementFromPoint(px, py);
+  observarApontador((sob) => {
     const linha = sob?.closest<HTMLElement>('[data-project-row]');
-    aplicar(linha ? Number(linha.dataset.projectRow) : -1);
-  };
-
-  let agendado = false;
-  const agendar = () => {
-    if (agendado) return;
-    agendado = true;
-    requestAnimationFrame(() => {
-      agendado = false;
-      resolver();
-    });
-  };
-
-  window.addEventListener('mousemove', (evento) => {
-    px = evento.clientX;
-    py = evento.clientY;
-    moverX(px);
-    moverY(py);
-    girar(gsap.utils.clamp(-9, 9, velocidade * 0.6));
-    agendar();
+    aplicar(linha && indice.contains(linha) ? Number(linha.dataset.projectRow) : -1);
   });
 
-  window.addEventListener('scroll', agendar, { passive: true });
-  window.addEventListener('resize', agendar);
-
-  document.addEventListener('mouseleave', () => {
-    px = -1;
-    py = -1;
-    aplicar(-1);
-  });
+  window.addEventListener(
+    'mousemove',
+    (evento) => {
+      moverX(evento.clientX);
+      moverY(evento.clientY);
+      girar(gsap.utils.clamp(-9, 9, velocidade * 0.6));
+    },
+    { passive: true },
+  );
 
   aplicar(-1);
 }
@@ -584,5 +599,6 @@ iniciarPreviewProjetos();
 iniciarHeader();
 iniciarMenu();
 iniciarAmbiente();
+iniciarApontador();
 
 window.addEventListener('load', () => ScrollTrigger.refresh());

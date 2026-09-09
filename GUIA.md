@@ -6,8 +6,9 @@ no espírito das referências enviadas pela cliente.
 
 Este arquivo é a fonte de contexto para quem continuar o projeto — humano ou agente.
 
-Para quem só vai **trocar textos e imagens**, existe o [CONTEUDO.md](./CONTEUDO.md):
-seção por seção do site, com tamanho de cada imagem e onde mora cada texto.
+O [CONTEUDO.md](./CONTEUDO.md) é a especificação de imagens entregue à equipe da
+cliente: seção por seção, o tamanho e o formato de cada imagem. É documento para
+quem não mexe no código — não coloque caminho de arquivo nem instrução técnica lá.
 
 ---
 
