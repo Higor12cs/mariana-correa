@@ -380,11 +380,12 @@ function iniciarCursor() {
     const estado = estados[chave] ?? estados.padrao;
     anel.className = `${base} ${estado.classe}`;
     rotulo.textContent = estado.rotulo;
-    gsap.to(ponto, { opacity: estado.rotulo ? 0 : 1, duration: 0.2 });
+    gsap.to(ponto, { opacity: estado.rotulo ? 0 : 1, duration: 0.2, overwrite: 'auto' });
     gsap.to(rotulo, {
       opacity: estado.rotulo ? 1 : 0,
       scale: estado.rotulo ? 1 : 0.75,
       duration: 0.3,
+      overwrite: 'auto',
     });
   };
 
@@ -453,17 +454,23 @@ function iniciarPreviewProjetos() {
     ativa = alvo;
 
     if (alvo < 0) {
-      gsap.to(preview, { opacity: 0, scale: 0.85, duration: 0.4 });
-      gsap.to(linhas, { opacity: 1, duration: 0.4 });
+      gsap.to(preview, { opacity: 0, scale: 0.85, duration: 0.4, overwrite: 'auto' });
+      gsap.to(linhas, { opacity: 1, duration: 0.4, overwrite: 'auto' });
       return;
     }
 
-    gsap.to(preview, { opacity: 1, scale: 1, duration: 0.5, ease: 'power3.out' });
+    gsap.to(preview, {
+      opacity: 1,
+      scale: 1,
+      duration: 0.5,
+      ease: 'power3.out',
+      overwrite: 'auto',
+    });
     slides.forEach((slide, i) => {
-      gsap.to(slide, { opacity: i === alvo ? 1 : 0, duration: 0.45 });
+      gsap.to(slide, { opacity: i === alvo ? 1 : 0, duration: 0.45, overwrite: 'auto' });
     });
     linhas.forEach((linha, i) => {
-      gsap.to(linha, { opacity: i === alvo ? 1 : 0.28, duration: 0.4 });
+      gsap.to(linha, { opacity: i === alvo ? 1 : 0.28, duration: 0.4, overwrite: 'auto' });
     });
   };
 
